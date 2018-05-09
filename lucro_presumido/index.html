@@ -1,0 +1,988 @@
+<?php 
+?>
+<!doctype html>
+<html>
+
+    
+	<head>
+		<title>Lucro Presumido</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="initial-scale=1.0">
+        <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+        <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+    </head>
+    <script>
+//        CRÉDITOS DA FUNÇÃO DE CONVERTER A MOEDA - 
+//        https://forum.imasters.com.br/topic/344232-resolvido%C2%A0c%C3%A1lculo-e-resultado-no-formato-moeda-em-javascript/
+//        TODA A FUNÇÃO FOI TIRADA DESSE LINK PARA USO NESSE SISTEMA, A PAGINA 'TEST.PHP' CONTEM TODO O CODIGO CONTIDO NESSE SITE
+        
+//        FUNÇÂO PARA CONVERTER PARA MOEDA - FORMATAÇÃO!
+        function maskIt(w,e,m,r,a){
+
+            // Cancela se o evento for Backspace
+            if (!e) var e = window.event
+            if (e.keyCode) code = e.keyCode;
+            else if (e.which) code = e.which;
+
+            // Variáveis da função
+            var txt  = (!r) ? w.value.replace(/[^\d]+/gi,'') : w.value.replace(/[^\d]+/gi,'').reverse();
+            var mask = (!r) ? m : m.reverse();
+            var pre  = (a ) ? a.pre : "";
+            var pos  = (a ) ? a.pos : "";
+            var ret  = "";
+            if(code == 9 || code == 8 || txt.length == mask.replace(/[^#]+/g,'').length) return false;
+
+            // Loop na máscara para aplicar os caracteres
+            for(var x=0,y=0, z=mask.length;x<z && y<txt.length;){
+            if(mask.charAt(x)!='#'){
+            ret += mask.charAt(x); x++; } 
+            else {
+            ret += txt.charAt(y); y++; x++; } }
+
+            // Retorno da função
+            ret = (!r) ? ret : ret.reverse()	
+            w.value = pre+ret+pos; 
+        }
+        // Novo método para o objeto 'String'
+        String.prototype.reverse = function(){
+        return this.split('').reverse().join(''); 
+        };
+        function number_format( number, decimals, dec_point, thousands_sep ) {
+            var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
+            var d = dec_point == undefined ? "," : dec_point;
+            var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
+            var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+            return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+        }
+//______________________--__________________ FIM DA FUNÇÃO DA CONVERSÃO E MASCARA PARA MOEDA ____________________________--______________________
+        
+        
+        
+//            FUNÇÃO PARA FORMATAR TELEFONE E CNPJ
+//            CRÉDITOS AO PROFESSOR CLÓVIS DIAS DA FACULDADE FATEC DE SÃO ROQUE
+            function formatar(mascara, documento){
+                  var i = documento.value.length;
+                  var saida = mascara.substring(0,1);
+                  var texto = mascara.substring(i)
+
+                  if (texto.substring(0,1) != saida){
+                            documento.value += texto.substring(0,1);
+                  }
+
+            }
+//_______________________--_____________TERMINA FUNÇÃO DE FORMATAÇÃO DO INPUT TELEFONE E CNPJ _______________________--___________
+        
+        
+        
+        function calcular_receita_bruta(){
+             
+//            PARSE FLOAT PRA CALCULAR VALORES FLUTUANTES
+//            PEGA AS VARIAVEIS DOS INPUTS
+            var n1 = parseFloat(document.getElementById('n1').value.replace(/\./g, "").replace(",", "."), 10);
+            var n2 = parseFloat(document.getElementById('n2').value.replace(/\./g, "").replace(",", "."), 10);
+            var n3 = parseFloat(document.getElementById('n3').value.replace(/\./g, "").replace(",", "."), 10);
+            var n4 = parseFloat(document.getElementById('n4').value.replace(/\./g, "").replace(",", "."), 10);
+            var n5 = parseFloat(document.getElementById('n5').value.replace(/\./g, "").replace(",", "."), 10);
+            var n6 = parseFloat(document.getElementById('n6').value.replace(/\./g, "").replace(",", "."), 10);
+            var n7 = parseFloat(document.getElementById('n7').value.replace(/\./g, "").replace(",", "."), 10);
+            var n8 = parseFloat(document.getElementById('n8').value.replace(/\./g, "").replace(",", "."), 10);
+            var n9 = parseFloat(document.getElementById('n9').value.replace(/\./g, "").replace(",", "."), 10);
+            var n10 = parseFloat(document.getElementById('n10').value.replace(/\./g, "").replace(",", "."), 10);
+            var n11 = parseFloat(document.getElementById('n11').value.replace(/\./g, "").replace(",", "."), 10);
+                        
+            var retido_fonte = parseFloat(document.getElementById('retido_fonte').value.replace(/\./g, "").replace(",", "."), 10);
+            
+            var retido_fonte_csll = parseFloat(document.getElementById('retido_fonte_csll').value.replace(/\./g, "").replace(",", "."), 10);
+            
+            var retido_fonte_pis = parseFloat(document.getElementById('retido_fonte_pis').value.replace(/\./g, "").replace(",", "."), 10);
+            
+            var retido_fonte_cofins = parseFloat(document.getElementById('retido_fonte_cofins').value.replace(/\./g, "").replace(",", "."), 10);
+            
+            var valor_lucro_contabil = parseFloat(document.getElementById('valor_lucro_contabil').value.replace(/\./g, "").replace(",", "."), 10);
+            
+//            CALCULO DAS ALICOS DE CADA INPUT
+            var alicotan1 = eval(n1 * (1.6/100));
+            var alic1 = number_format(alicotan1,2, ',', '.');
+            
+            var alicotan2 = eval(n2 * (8/100));
+            var alic2 = number_format(alicotan2,2, ',', '.');
+            var alicotan3 = eval(n3 * (8/100));
+            var alic3 = number_format(alicotan3,2, ',', '.');
+            var alicotan4 = eval(n4 * (8/100));
+            var alic4 = number_format(alicotan4,2, ',', '.');
+            var alicotan5 = eval(n5 * (8/100));
+            var alic5 = number_format(alicotan5,2, ',', '.');
+            
+            var alicotan6 = eval(n6 * (16/100));
+            var alic6 = number_format(alicotan6,2, ',', '.');
+            var alicotan7 = eval(n7 * (16/100));
+            var alic7 = number_format(alicotan7,2, ',', '.');
+            
+            var alicotan8 = eval(n8 * (32/100));
+            var alic8 = number_format(alicotan8,2, ',', '.');
+            var alicotan9 = eval(n9 * (32/100));
+            var alic9 = number_format(alicotan9,2, ',', '.');
+            var alicotan10 = eval(n10 * (32/100));
+            var alic10 = number_format(alicotan10,2, ',', '.');
+            var alicotan11 = eval(n11 * (32/100));
+            var alic11 = number_format(alicotan11,2, ',', '.');
+            
+//            CALCULO IMPOSTO
+            var base_calculo_imposton1 = eval(n1 * (12/100));
+            var basen1 = number_format(base_calculo_imposton1,2, ',', '.');
+            var base_calculo_imposton2 = eval(n2 * (12/100));
+            var basen2 = number_format(base_calculo_imposton2,2, ',', '.');
+            var base_calculo_imposton3 = eval(n3 * (12/100));
+            var basen3 = number_format(base_calculo_imposton3,2, ',', '.');
+            var base_calculo_imposton4 = eval(n4 * (12/100));
+            var basen4 = number_format(base_calculo_imposton4,2, ',', '.');
+            var base_calculo_imposton5 = eval(n5 * (12/100));
+            var basen5 = number_format(base_calculo_imposton5,2, ',', '.');
+            var base_calculo_imposton6 = eval(n6 * (12/100));
+            var basen6 = number_format(base_calculo_imposton6,2, ',', '.');
+            var base_calculo_imposton7 = eval(n7 * (12/100));
+            var basen7 = number_format(base_calculo_imposton7,2, ',', '.');
+            
+            var base_calculo_imposton8 = eval(n8 * (32/100));
+            var basen8 = number_format(base_calculo_imposton8,2, ',', '.');
+            var base_calculo_imposton9 = eval(n9 * (32/100));
+            var basen9 = number_format(base_calculo_imposton9,2, ',', '.');
+            var base_calculo_imposton10 = eval(n10 * (32/100));
+            var basen10 = number_format(base_calculo_imposton10,2, ',', '.');
+            var base_calculo_imposton11 = eval(n11 * (32/100));
+            var basen11 = number_format(base_calculo_imposton11,2, ',', '.');
+            
+            var bc_cslln1 = eval(base_calculo_imposton1 * (9/100));
+            var bcn1 = number_format(bcn1,2, ',', '.');
+            var bc_cslln2 = eval(base_calculo_imposton2 * (9/100));
+            var bcn2 = number_format(bcn2,2, ',', '.');
+            var bc_cslln3 = eval(base_calculo_imposton3 * (9/100));
+            var bcn3 = number_format(bcn3,2, ',', '.');
+            var bc_cslln4 = eval(base_calculo_imposton4 * (9/100));
+            var bcn4 = number_format(bcn4,2, ',', '.');
+            var bc_cslln5 = eval(base_calculo_imposton5 * (9/100));
+            var bcn5 = number_format(bcn5,2, ',', '.');
+            var bc_cslln6 = eval(base_calculo_imposton6 * (9/100));
+            var bcn6 = number_format(bcn6,2, ',', '.');
+            var bc_cslln7 = eval(base_calculo_imposton7 * (9/100));
+            var bcn7 = number_format(bcn7,2, ',', '.');
+            var bc_cslln8 = eval(base_calculo_imposton8 * (9/100));
+            var bcn8 = number_format(bcn8,2, ',', '.');
+            var bc_cslln9 = eval(base_calculo_imposton9 * (9/100));
+            var bcn9 = number_format(bcn9,2, ',', '.');
+            var bc_cslln10 = eval(base_calculo_imposton10 * (9/100));
+            var bcn10 = number_format(bcn10,2, ',', '.');
+            var bc_cslln11 = eval(base_calculo_imposton11 * (9/100));
+            var bcn11 = number_format(bcn11,2, ',', '.');
+            
+            var receita_bruta = eval(n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + n10 + n11);
+            var receitatotal = number_format(receita_bruta,2, ',', '.');
+            document.getElementById('resultado_receita_bruta').innerHTML = receitatotal;
+            
+//          PIS E COFINS TEM QUE ESTAR NESSA ORDEM NO CÓDIGO              
+            var pis = eval(receita_bruta * (0.65/100));
+            var pistotal = number_format(pis,2, ',', '.');
+            
+            var cofins = eval(receita_bruta * (3/100));
+            var cofinstotal = number_format(cofins,2, ',', '.');
+            
+//            VALORES A SEREM SOMADOS!
+            var parcelas = parseFloat(document.getElementById('parcelas').value.replace(/\./g, "").replace(",", "."), 10);
+            var parce = number_format(parcelas,2, ',', '.');
+            document.getElementById('valor_parcelas').innerHTML = parce;
+            
+            var rendimentos = parseFloat(document.getElementById('rendimentos').value.replace(/\./g, "").replace(",", "."), 10);
+            var rendi = number_format(rendimentos,2, ',', '.');
+            document.getElementById('valor_rendimentos').innerHTML = rendi;
+            
+            var ganhos = parseFloat(document.getElementById('ganhos').value.replace(/\./g, "").replace(",", "."), 10);
+            var gan = number_format(ganhos,2, ',', '.');
+            document.getElementById('valor_ganhos').innerHTML = gan;
+            
+            var demais_receitas = parseFloat(document.getElementById('demais_receitas').value.replace(/\./g, "").replace(",", "."), 10);
+            var demaisrece = number_format(demais_receitas,2, ',', '.');
+            document.getElementById('valor_demais_receitas').innerHTML = demaisrece;
+            
+            var ganhos_capital = parseFloat(document.getElementById('ganhos_capital').value.replace(/\./g, "").replace(",", "."), 10);
+            var ganhoscapi = number_format(ganhos_capital,2, ',', '.');
+            document.getElementById('valor_ganhos_capital').innerHTML = ganhoscapi;
+
+            
+//            MOSTRAR RESULTADO
+            document.getElementById('resultado_alicotan1').innerHTML = alic1;
+            document.getElementById('resultado_alicotan2').innerHTML = alic2;
+            document.getElementById('resultado_alicotan3').innerHTML = alic3;
+            document.getElementById('resultado_alicotan4').innerHTML = alic4;
+            document.getElementById('resultado_alicotan5').innerHTML = alic5;
+            document.getElementById('resultado_alicotan6').innerHTML = alic6;
+            document.getElementById('resultado_alicotan7').innerHTML = alic7;
+            document.getElementById('resultado_alicotan8').innerHTML = alic8;
+            document.getElementById('resultado_alicotan9').innerHTML = alic9;
+            document.getElementById('resultado_alicotan10').innerHTML = alic10;
+            document.getElementById('resultado_alicotan11').innerHTML = alic11;
+            
+            var sub_total = eval(alicotan1+alicotan2+alicotan3+alicotan4+alicotan5+alicotan6+alicotan7+alicotan8+alicotan9+alicotan10+alicotan11);
+            var subtotal = number_format(sub_total,2, ',', '.');
+            document.getElementById('sub_total').innerHTML = subtotal;
+            
+            
+            var total_lucro = eval(sub_total+parcelas+rendimentos+ganhos+demais_receitas+ganhos_capital);
+            var totallc = number_format(total_lucro,2, ',', '.');
+            document.getElementById('total_lucro').innerHTML = totallc;
+            document.getElementById('total_lucro2').innerHTML = totallc;
+            
+            document.getElementById('base_calculo_imposton1').innerHTML = basen1;
+            document.getElementById('base_calculo_imposton2').innerHTML = basen2;
+            document.getElementById('base_calculo_imposton3').innerHTML = basen3;
+            document.getElementById('base_calculo_imposton4').innerHTML = basen4;
+            document.getElementById('base_calculo_imposton5').innerHTML = basen5;
+            document.getElementById('base_calculo_imposton6').innerHTML = basen6;
+            document.getElementById('base_calculo_imposton7').innerHTML = basen7;
+            document.getElementById('base_calculo_imposton8').innerHTML = basen8;
+            document.getElementById('base_calculo_imposton9').innerHTML = basen9;
+            document.getElementById('base_calculo_imposton10').innerHTML = basen10;
+            document.getElementById('base_calculo_imposton11').innerHTML = basen11;
+            
+            var sub_total_bc = eval(base_calculo_imposton1+base_calculo_imposton2+base_calculo_imposton3+base_calculo_imposton4+base_calculo_imposton5+base_calculo_imposton6+base_calculo_imposton7+base_calculo_imposton8+base_calculo_imposton9+base_calculo_imposton10+base_calculo_imposton11);
+            var subtotalbc = number_format(sub_total_bc,2, ',', '.');
+            document.getElementById('sub_total_bc').innerHTML = subtotalbc;
+            
+            var total_bc = eval(sub_total_bc+parcelas+rendimentos+ganhos+demais_receitas+ganhos_capital);
+            var totalbc = number_format(total_bc,2, ',', '.');    
+            document.getElementById('total_bc').innerHTML = totalbc;
+            
+            var resultado_csll = eval(total_bc*(9/100));
+            var resultadocsll = number_format(resultado_csll,2, ',', '.');    
+            
+            document.getElementById('resultado_csll').innerHTML = resultadocsll;
+            document.getElementById('resultado_csll2').innerHTML = resultadocsll;
+            document.getElementById('resultado_csll3').innerHTML = resultadocsll;
+            
+            
+            document.getElementById('pis').innerHTML = pistotal;
+            document.getElementById('pis2').innerHTML = pistotal;
+            document.getElementById('cofins').innerHTML = cofinstotal;
+            document.getElementById('cofins2').innerHTML = cofinstotal;
+            
+            var irpj = eval(total_lucro * (15/100));
+            var irpjtotal = number_format(irpj,2, ',', '.');    
+            document.getElementById('valor_irpj').innerHTML = irpjtotal;
+
+            
+            if(total_lucro > 60000.00){
+                var sobra = eval(total_lucro - 60000.00);
+                var sobratotal = number_format(sobra,2, ',', '.');   
+//                document.getElementById('sobra').innerHTML = sobra;
+                
+                var adicional = eval(sobra * (10/100));
+                var adicionaltotal = number_format(adicional,2, ',', '.'); 
+                document.getElementById('adicional').innerHTML = adicionaltotal;
+                
+                var total_irpj = eval(irpj + adicional);
+                var totalirpj = number_format(total_irpj,2, ',', '.'); 
+                document.getElementById('total_irpj').innerHTML = totalirpj;
+                document.getElementById('total_irpj2').innerHTML = totalirpj;
+                
+            }
+            else{
+//                document.getElementById('sobra').innerHTML = 0;
+                adicional = 0;
+                document.getElementById('adicional').innerHTML = adicional;
+                var total_irpj = eval(irpj + adicional);
+                var totalirpj = number_format(total_irpj,2, ',', '.'); 
+                document.getElementById('total_irpj').innerHTML = totalirpj;
+                document.getElementById('total_irpj2').innerHTML = totalirpj;
+            }
+            
+//            RETIDO NA FONTE IRPJ
+            var pagar = eval(total_irpj - retido_fonte);
+            var pagarirpj = number_format(pagar,2, ',', '.'); 
+            document.getElementById('pagar').innerHTML = pagarirpj;
+            
+//            RETIDO NA FONTE CSLL
+            var pagar_csll = eval(resultado_csll - retido_fonte_csll);
+            var pagarcsll = number_format(pagar_csll,2, ',', '.'); 
+            document.getElementById('pagar_csll').innerHTML = pagarcsll;
+            
+//            QUANTIDADE DE PARCELAS IRPJ
+            var parcela_irpj1 = eval(pagar / 1);
+            var parceirpj1 = number_format(parcela_irpj1,2, ',', '.');
+            
+            var parcela_irpj2 = eval(pagar / 2);
+            var parceirpj2 = number_format(parcela_irpj2,2, ',', '.');
+            
+            var parcela_irpj3 = eval(pagar / 3);
+            var parceirpj3 = number_format(parcela_irpj3,2, ',', '.');
+            
+//            QUANTIDADE DE PARCAELAS CSLL
+            var parcela_csll1 = eval(pagar_csll / 1);
+            var parcecsll1 = number_format(parcela_csll1,2, ',', '.');
+            
+            var parcela_csll2 = eval(pagar_csll / 2);
+            var parcecsll2 = number_format(parcela_csll2,2, ',', '.');
+            
+            var parcela_csll3 = eval(pagar_csll / 3);
+            var parcecsll3 = number_format(parcela_csll3,2, ',', '.');
+
+//            LÓGICA DAS PARCELAS PARA IRPJ
+            if(pagar >= 3000.00){
+//                IRPJ
+                document.getElementById('parcelas_irpj1').innerHTML = parceirpj1;
+                document.getElementById("radioirpj1").disabled = false;
+                document.getElementById('parcelas_irpj2').innerHTML = parceirpj2;
+                document.getElementById("radioirpj2").disabled = false;
+                document.getElementById('parcelas_irpj3').innerHTML = parceirpj3;
+                document.getElementById("radioirpj3").disabled = false;
+                
+               }
+            else if(pagar <= 1999.99){
+//                IRPJ
+                document.getElementById('parcelas_irpj1').innerHTML = parceirpj1;
+                document.getElementById("radioirpj1").disabled = false;
+                document.getElementById('parcelas_irpj2').innerHTML = '00,00';
+                document.getElementById("radioirpj2").disabled = true;
+                document.getElementById('parcelas_irpj3').innerHTML = '00,00';
+                document.getElementById("radioirpj3").disabled = true;
+            }  
+            else if(pagar >= 2000.00){
+//                IRPJ
+                document.getElementById('parcelas_irpj1').innerHTML = parceirpj1;
+                document.getElementById("radioirpj1").disabled = false;
+                document.getElementById('parcelas_irpj2').innerHTML = parceirpj2;
+                document.getElementById("radioirpj2").disabled = false;
+                document.getElementById('parcelas_irpj3').innerHTML = '00,00';
+                document.getElementById("radioirpj3").disabled = true;
+            }
+            
+            //de 00,01 a 1999,99 = 1 parcela
+            //de 2000,00 a 2999,99 = até 2 parcelas
+            //acima de 3000,00 = até 3 parcelas
+            
+//            LÓGICA DAS PARCELAS PARA CSLL - 
+//            FIZ SEPARADO PARA NÃO DAR PROBLEMA NA HORA DE COLOCAR VALOR RETIDO
+//            OU SEJA, FAZ AS CONDIÇÕES SEPARADAMENTE
+            if(pagar_csll >= 3000.00){
+//                CSLL
+                document.getElementById('parcelas_csll1').innerHTML = parcecsll1;
+                document.getElementById("radiocsll1").disabled = false;
+                document.getElementById('parcelas_csll2').innerHTML = parcecsll2;
+                document.getElementById("radiocsll2").disabled = false;
+                document.getElementById('parcelas_csll3').innerHTML = parcecsll3;
+                document.getElementById("radiocsll3").disabled = false;
+                
+               }
+            else if(pagar_csll <= 1999.00){
+//                CSLL
+                document.getElementById('parcelas_csll1').innerHTML = parcecsll1;
+                document.getElementById("radiocsll1").disabled = false;
+                document.getElementById('parcelas_csll2').innerHTML = '00,00';
+                document.getElementById("radiocsll2").disabled = true;
+                document.getElementById('parcelas_csll3').innerHTML = '00,00';
+                document.getElementById("radiocsll3").disabled = true;
+            }  
+            else if(pagar_csll >= 2000.00){
+//                CSLL
+                document.getElementById('parcelas_csll1').innerHTML = parcecsll1;
+                document.getElementById("radiocsll1").disabled = false;
+                document.getElementById('parcelas_csll2').innerHTML = parcecsll2;
+                document.getElementById("radiocsll2").disabled = false;
+                document.getElementById('parcelas_csll3').innerHTML = '00,00';
+                document.getElementById("radiocsll3").disabled = true;
+            }
+
+            
+//            RETIDO NA FONTE PIS
+            var pagar_pis = eval(pis - retido_fonte_pis);
+            var pagarpis = number_format(pagar_pis,2, ',', '.'); 
+            document.getElementById('pagar_pis').innerHTML = pagarpis;            
+            
+//            RETIDO NA FONTE COFINS
+            var pagar_cofins = eval(cofins - retido_fonte_cofins);
+            var pagarconfins = number_format(pagar_cofins,2, ',', '.'); 
+            document.getElementById('pagar_cofins').innerHTML = pagarconfins;
+            
+            
+//            CONTA DA NEGATIVO NO SISTEMA ORIGINAL TAMBEM!
+            var distribuivel = eval(total_lucro - total_irpj - resultado_csll - pis - cofins);
+            var valordistribuivel = number_format(distribuivel,2, ',', '.'); 
+//            var distribuivel = cofins - sub_total - resultado_csll - pis - total_irpj;
+            document.getElementById('distribuivel').innerHTML = valordistribuivel;
+            document.getElementById('distribuivel2').innerHTML = valordistribuivel;
+            
+//            IGNORAR ESSA LINHA
+//            ESSA CONTA SERVE PARA DEIXAR O VALOR 'POSITIVO' - NÂO È CONTA CORRETA, CHECAR COM O CLIENTE POSTERIORMENTE
+//            var excesso_apurado = eval(valor_lucro_contabil - distribuivel);
+            
+//            MATH.ABS() - SERVE PARA DEIXAR O NUMERO POSIVITO - CASO O NUMERO FOR POSITIVO AINDA ELE MANTEM
+            var excesso = number_format(Math.abs(distribuivel),2, ',', '.'); 
+            document.getElementById('excesso_apurado').innerHTML = excesso;
+
+        }
+        
+    </script>
+    
+<div class="container" id="corpo">
+	<body>
+        <br>
+    <div class="container">
+        <h1>Lucro Presumido</h1>
+        
+        <div class="alert alert-danger notprint" role="alert">
+          <strong>Alerta: </strong>Antes de iniciar os cálculos, analise atentamente cada um dos itens!
+        </div>
+        
+        
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Nome:</span>
+              </div>
+                    <input type="text" class="form-control col-md-5 toprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+            </div>
+        
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">Telefone:</span>
+              </div>
+                    <input type="text" class="form-control col-md-3 toprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" maxlength="12" OnKeyPress="formatar('##-####-####', this)">
+            </div>
+        
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-sm">CNPJ:</span>
+              </div>
+                    <input type="text" class="form-control col-md-4 toprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" maxlength="18" OnKeyPress="formatar('##.###.###/####-##', this)">
+            </div>
+        
+            <div class="row">
+                <div class="col-md-2">
+                        <p>Período de Apuração</p>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control form-control-sm">
+                      <option>01/01 a 31/03</option>
+                      <option>01/04 a 30/06</option>
+                      <option>01/07 a 30/09</option>
+                      <option>01/10 a 31/12</option>
+                    </select>  
+                </div>
+            </div>
+</div>
+<hr>
+<table id="tabelao" class="table table-bordered table-sm table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th class="notprint" scope="col">#</th>
+      <th scope="col">COMPOSIÇÃO DA BASE DE CÁLCULO:</th>
+      <th scope="col">ALÍQ.</th>
+      <th scope="col">VENDA PRO/SERV</th>
+      <th class="notprint" scope="col">DEDUÇÃO DA BC DO PIS/COFINS</th>
+      <th class="notprint" scope="col">#</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Revenda de combustíveis</td>
+      <td>1,60%</td>
+      <td><input id="n1" value="0" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></td>
+      <td class="notprint"><input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Comércio, Indústria e demais atividades (exceto serviços)</td>
+      <td>8,00%</td>
+      <td><input id="n2" value="0" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></td>
+      <td class="notprint"><input type="text" class="form-control notprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serv. da Constr. Civil com emprego de Materiais</td>
+      <td>8,00%</td>
+      <td><input id="n3" value="0" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></td>
+      <td class="notprint"><input type="text" class="form-control notprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviços hospitalares</td>
+      <td>8,00%</td>
+      <td><input id="n4" value="0" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></td>
+      <td class="notprint"><input type="text" class="form-control notprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviço de transporte de carga</td>
+      <td>8,00%</td>
+      <td><input id="n5" value="0" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></td>
+      <td class="notprint"><input type="text" class="form-control notprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviços de transporte, exceto o de carga</td>
+      <td>16,00%</td>
+      <td><input id="n6" value="0" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></td>
+      <td class="notprint"><input type="text" class="form-control notprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviços em geral (fatur. até a R$ 120.000,00, no ano)</td>
+      <td>16,00%</td>
+      <td><input id="n7" value="0" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></td>
+      <td class="notprint"><input type="text" class="form-control notprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Administração, locação ou cessão de bens e direitos</td>
+      <td>32,00%</td>
+      <td><input id="n8" value="0" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></td>
+      <td class="notprint"><input type="text" class="form-control notprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Intermediação de negócios</td>
+      <td>32,00%</td>
+      <td><input id="n9" value="0" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></td>
+      <td class="notprint"><input type="text" class="form-control notprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviços em geral (exceto serviços hospitalares)</td>
+      <td>32,00%</td>
+      <td><input id="n10" value="0" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></td>
+      <td class="notprint"><input type="text" class="form-control notprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviços da construção civil vinculado a contrato de concessão de serviços pùblicos</td>
+      <td>32,00%</td>
+      <td><input id="n11" value="0" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"></td>
+      <td class="notprint"><input type="text" class="form-control notprint" aria-label="Small" aria-describedby="inputGroup-sizing-sm" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+    <tr class="table-active">
+      <th class="notprint" scope="row"></th>
+    <td><strong>Receita Bruta Total</strong></td>
+      <td></td>
+      <td><div id="resultado_receita_bruta"></div></td>
+      <td class="notprint">00,00</td>
+      <td class="notprint"></td>
+    </tr>
+    <tr>
+      <td class="notprint" colspan="6"><button type="button" class="btn btn-outline-primary btn-right" onclick="calcular_receita_bruta()">Cacular</button></td>
+    </tr>
+    <tr>
+    <td class="notprint" colspan="6"><p class="p-red">*Lembramos que a partir do momento que a receita total ultrapassar a R$78.000.000,00 o contribuinte estará impedido de optar pelo Lucro Presumido no ano seguinte.</p></td></tr>
+  </tbody>
+    
+</table>
+
+        
+<table class="table table-bordered table-sm table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th class="notprint" scope="col">#</th>
+      <th scope="col">LUCRO PRESUMIDO POR ATIVIDADE</th>
+      <th class="notprint" scope="col"></th>
+      <th scope="col">VALOR </th>
+      <th scope="col">BC DA CSLL - R$	</th>
+      <th class="notprint" scope="col">#</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Revenda de combustíveis</td>
+      <td class="notprint"></td>
+      <td><div id="resultado_alicotan1"></div></td>
+      <td><div id="base_calculo_imposton1"></div></td>
+      <td class="notprint"></td>
+    </tr>
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Comércio, Indústria e demais atividades (exceto serviços)</td>
+      <td class="notprint"></td>
+      <td><div id="resultado_alicotan2"></div></td>
+      <td><div id="base_calculo_imposton2"></div></td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serv. da Constr. Civil com emprego de Materiais</td>
+      <td class="notprint"></td>
+      <td><div id="resultado_alicotan3"></div></td>
+      <td><div id="base_calculo_imposton3"></div></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviços hospitalares</td>
+      <td class="notprint"></td>
+      <td><div id="resultado_alicotan4"></div></td>
+      <td><div id="base_calculo_imposton4"></div></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviço de transporte de carga</td>
+      <td class="notprint"></td>
+      <td><div id="resultado_alicotan5"></div></td>
+      <td><div id="base_calculo_imposton5"></div></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviços de transporte, exceto o de carga</td>
+      <td class="notprint"></td>
+      <td><div id="resultado_alicotan6"></div></td>
+      <td><div id="base_calculo_imposton6"></div></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviços em geral (fatur. até a R$ 120.000,00, no ano)</td>
+      <td class="notprint"></td>
+      <td><div id="resultado_alicotan7"></div></td>
+      <td><div id="base_calculo_imposton7"></div></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Administração, locação ou cessão de bens e direitos</td>
+      <td class="notprint"></td>
+      <td><div id="resultado_alicotan8"></div></td>
+      <td><div id="base_calculo_imposton8"></div></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Intermediação de negócios</td>
+      <td class="notprint"></td>
+      <td><div id="resultado_alicotan9"></div></td>
+      <td><div id="base_calculo_imposton9"></div></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviços em geral (exceto serviços hospitalares)</td>
+      <td class="notprint"></td>
+      <td><div id="resultado_alicotan10"></div></td>
+      <td><div id="base_calculo_imposton10"></div></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Serviços da construção civil vinculado a contrato de concessão de serviços pùblicos</td>
+      <td class="notprint"></td>
+      <td><div id="resultado_alicotan11"></div></td>
+      <td><div id="base_calculo_imposton11"></div></td>
+      <td class="notprint"></td>
+    </tr>
+    <tr class="table-active">
+      <th class="notprint" scope="row"></th>
+      <td><strong>SUB TOTAL</strong></td>
+      <td class="notprint"></td>
+      <td><div id="sub_total"></div></td>
+      <td><div id="sub_total_bc"></div></td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Parcela das receitas auferida no preço de transferência</td>
+      <td class="notprint"></td>
+      <td><input id="parcelas" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="0"></td>
+      <td><div id="valor_parcelas"></div></td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Rendimentos de aplicação financeira de renda fixa</td>
+      <td class="notprint"></td>
+      <td><input id="rendimentos" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="0"></td>
+      <td><div id="valor_rendimentos"></div></td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Ganhos líquidos em operações merc renda variável</td>
+      <td class="notprint"></td>
+      <td><input id="ganhos" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="0"></td>
+      <td><div id="valor_ganhos"></div></td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Demais receitas</td>
+      <td class="notprint"></td>
+      <td><input id="demais_receitas" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="0"></td>
+      <td><div id="valor_demais_receitas"></div></td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Ganhos de capital</td>
+      <td class="notprint"></td>
+      <td><input id="ganhos_capital" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="0"></td>
+      <td><div id="valor_ganhos_capital"></div></td>
+      <td class="notprint"></td>
+    </tr>
+    <tr class="table-active">
+      <th class="notprint" scope="row"></th>
+      <td><strong>TOTAL DO LUCRO PRESUMIDO</strong></td>
+      <td class="notprint"></td>
+      <td><div id="total_lucro"></div></td>
+      <td><div id="total_bc"></div></td>
+      <td class="notprint"></td>
+    </tr>
+    <tr>
+      <td class="notprint" colspan="6"><button type="button" class="btn btn-outline-primary btn-right" onclick="calcular_receita_bruta()">Cacular</button></td>
+    </tr>
+    
+    
+  </tbody>
+    
+</table>
+        
+<hr>
+<br>
+<table class="table table-bordered table-sm table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th class="notprint" scope="col">#</th>
+      <th scope="col">CÁLCULOS</th>
+      <th class="notprint" scope="col"></th>
+      <th scope="col">IRPJ </th>
+      <th scope="col">CSLL</th>
+      <th class="notprint" scope="col">#</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>IRPJ/CSLL Devidos</td>
+      <td class="notprint"></td>
+      <td><div id="valor_irpj"></div></td>
+      <td><div id="resultado_csll"></div></td>
+      <td class="notprint"></td>
+    </tr>
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Adicional do IRPJ</td>
+      <td class="notprint"></td>
+      <td><div id="adicional"></div></td>
+      <td>-----//-----</td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Total do IRPJ/CSLL</td>
+      <td class="notprint"></td>
+      <td><div id="total_irpj"></div></td>
+      <td><div id="resultado_csll2"></div></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>IRRF/CSLL Retidos na Fonte</td>
+      <td class="notprint"></td>
+     <td><input id="retido_fonte" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="0"></td>
+     <td><input id="retido_fonte_csll" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="0"></td>
+      <td class="notprint"></td>
+    </tr>
+          <tr>
+      <th class="notprint" scope="row"></th>
+      <td>IRPJ/CSLL A PAGAR</td>
+      <td class="notprint"></td>
+      <td><div id="pagar"></div></td>
+      <td><div id="pagar_csll"></div></td>
+      <td class="notprint"></td>
+    </tr>
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Qtde de Parcelas para pagamento do IRPJ/CSLL</td>
+      <td class="notprint"></td>
+      <td>
+          <input type="radio"  name="radio_irpj" id="radioirpj1" value="1">1x<div id="parcelas_irpj1"></div>
+          <input type="radio"  name="radio_irpj" id="radioirpj2" value="2">2x<div id="parcelas_irpj2"></div>
+          <input type="radio"  name="radio_irpj" id="radioirpj3" value="3">3x<div id="parcelas_irpj3"></div>
+      </td>
+      <td>
+          <input type="radio"  name="radio_csll" id="radiocsll1" value="1">1x<div id="parcelas_csll1"></div>
+          <input type="radio"  name="radio_csll" id="radiocsll2" value="2">2x<div id="parcelas_csll2"></div>
+          <input type="radio"  name="radio_csll" id="radiocsll3" value="3">3x<div id="parcelas_csll3"></div>
+      </td>
+      <td class="notprint"><button type="button" class="btn btn-outline-primary btn-right">...</button></td>
+    </tr>
+    <tr class="notprint">
+      <th scope="row"></th>
+      <td>Código a constar no DARF:</td>
+      <td></td>
+      <td><a href="#">2089</a></td>
+      <td><a href="#">2372</a></td>
+      <td></td>
+    </tr>
+    <tr>
+        <td class="notprint colored" colspan="3" class="table-primary">#</td>
+        <td class="colored" class="table-primary">PIS</td>
+        <td class="colored" class="table-primary">COFINS</td>
+        <td class="notprint colored" class="table-primary"></td>
+    </tr>
+
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>PIS/COFINS Devidos</td>
+      <td class="notprint"></td>
+      <td><div id="pis2"></div></td>
+      <td><div id="cofins2"></div></td>
+      <td class="notprint"></td>
+    </tr>    
+  
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>PIS/COFINS Retidos na Fonte</td>
+      <td class="notprint"></td>
+     <td><input id="retido_fonte_pis" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="0"></td>
+     <td><input id="retido_fonte_cofins" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="0"></td>
+      <td class="notprint"></td>
+    </tr>
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td><strong>	PIS/COFINS A PAGAR</strong></td>
+      <td class="notprint"></td>
+     <td><div id="pagar_pis"></div></td>
+     <td><div id="pagar_cofins"></div></td>
+      <td class="notprint"></td>
+    </tr>
+    <tr class="notprint">
+      <th scope="row"></th>
+      <td>Código a constar no DARF:</td>
+      <td></td>
+      <td><a href="#">8109</a></td>
+      <td><a href="#">2172</a></td>
+      <td></td>
+    </tr>
+          <tr>
+      <td class="notprint" colspan="6"><button type="button" class="btn btn-outline-primary btn-right" onclick="calcular_receita_bruta()">Cacular</button></td>
+    </tr>
+      
+  </tbody>
+    
+</table>
+
+<hr>
+<br>
+<table class="table table-bordered table-sm table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th class="notprint" scope="col">#</th>
+      <th scope="col">Lucro Passível de Distribuição sem Incidência do IRF</th>
+      <th scope="col"></th>
+      <th class="notprint" scope="col">#</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Lucro Presumido do período</td>
+      <td><div id="total_lucro2"></div></td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td>IRPJ</td>
+      <td><div id="total_irpj2"></div></td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td>CSLL</td>
+      <td><div id="resultado_csll3"></div></td>
+      <td class="notprint"></td>
+    </tr>        
+      
+      <tr>
+      <th class="notprint" scope="row"></th>
+      <td>PIS</td>
+      <td><div id="pis"></div></td>
+      <td class="notprint"></td>
+    </tr>  
+      
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>COFINS</td>
+      <td><div id="cofins"></div></td>
+      <td class="notprint"></td>
+    </tr>    
+      
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td><strong>Valor Distribuível</strong></td>
+      <td><div id="distribuivel"></div></td>
+      <td class="notprint"></td>
+    </tr>
+    
+      
+  </tbody>
+    
+</table>
+
+<hr>
+<br>
+<table class="table table-bordered table-sm table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th class="notprint" scope="col">#</th>
+      <th scope="col">Excesso do Lucro Presumido</th>
+      <th scope="col"></th>
+      <th class="notprint" scope="col">#</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Lucro Contábil</td>
+     <td><input id="valor_lucro_contabil" type="text" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" value="0" disabled></td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td>Lucro Presumido</td>
+      <td><div id="distribuivel2"></div></td>
+      <td class="notprint"></td>
+    </tr>
+        <tr>
+      <th class="notprint" scope="row"></th>
+      <td><strong>Excesso Apurado (Isento da Retenção na Fonte)</strong></td>
+      <td><div id="excesso_apurado"></div></td>
+      <td class="notprint"></td>
+    </tr>
+    <tr>
+      <td class="notprint" colspan="6"><button type="button" class="btn btn-outline-primary btn-right">Cacular</button></td>
+    </tr>
+    
+      
+  </tbody>
+    
+</table>
+        <div class="row">
+            <div class="col-md-7 text-center">
+                <button type="button" class="btn btn-outline-dark btn-right notprint" onClick ="print()">Imprimir</button>
+            </div>
+        </div>
+        <br>
+    </body>
+</div>
+    
+    
+</html>
+
+

@@ -1,0 +1,45 @@
+h1{
+    text-align: center;
+}
+p{
+    text-align: center;
+}
+.btn{
+    text-align: center;
+}
+
+.input-hidden{
+    display: none;
+}
+.btn-right{
+    float: right;
+}
+.p-red{
+    color: red;
+}
+.colored{
+    background-color: dimgray;
+    color: white;
+    
+}
+
+ @media print {
+    
+     .toprint{
+         border-width: 0px;
+        
+     }
+     
+     
+     .notprint { 
+         visibility:hidden; 
+     } 
+     
+     #tabelao{
+      
+         width: 1250px;
+         margin-bottom: -50px;
+     }
+     
+     
+}
